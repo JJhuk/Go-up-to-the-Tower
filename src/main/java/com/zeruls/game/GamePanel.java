@@ -103,46 +103,6 @@ public class GamePanel extends JPanel implements Runnable{
         oldFrameCount = 0;
 		
 		while(running) {
-			/*double now = System.nanoTime();
-			int updateCount = 0;
-			while((now - lastUpdateTime > TBU)&&(updateCount < MUBR)) {
-				update();
-
-				input(mouse,key);
-				lastUpdateTime +=TBU;
-				updateCount++;
-			}
-			
-			if(now - lastUpdateTime > TBU) {
-				lastUpdateTime = now - TBU;
-			}
-			
-			input(mouse, key);
-
-			render();
-			draw();
-			lastRenderTime = now;
-			frameCount++;
-			
-			int thisSecond = (int) (lastUpdateTime / 1000000000);
-			if(thisSecond > lastSecondTime) {
-				if(frameCount != oldFrameCount) {
-					System.out.println("NEW SECOND " + thisSecond+" "+frameCount);
-					oldFrameCount = frameCount;
-				}
-				frameCount = 0;
-				lastSecondTime = thisSecond;
-			}
-			while(now - lastRenderTime < TTBR && now - lastUpdateTime < TBU) {
-				Thread.yield();
-				try {
-					Thread.sleep(1);
-				}catch(Exception e) {
-					System.out.println("Error : yield thread");
-				}
-				now = System.nanoTime();
-			}*/
-
 			long currentTime = System.nanoTime();
 			deltaU += (currentTime - initialTime) /timeU;
 			deltaF += (currentTime - initialTime) / timeF;
@@ -169,11 +129,7 @@ public class GamePanel extends JPanel implements Runnable{
 				frames++;
 				deltaF--;
 			}
-
 			if(System.currentTimeMillis() - timer > 1000) {
-				//if(RENDER_TIME) {
-					//System.out.println(String.format("UPS : %s, FPS: %s",ticks,frames));
-				//}
 				frames = 0;
 				ticks=0;
 				timer += 1000;

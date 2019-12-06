@@ -72,11 +72,6 @@ public class Sprite {
         return sprite;
     }
 
-    //* * * *
-    //*
-    //*
-    //*
-
     public void loadSpriteArray() {
         spriteArray = new BufferedImage[hSprite][wSprite];
 
@@ -99,7 +94,6 @@ public class Sprite {
     public BufferedImage getSprite() {
         return SPRITESHEET;
     }
-
 
     public BufferedImage[] getSpriteArray(int i) {
         return spriteArray[i];

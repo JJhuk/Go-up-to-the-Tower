@@ -106,11 +106,15 @@ public class Card implements Cloneable{
     public void setisBacksprite(boolean isUsed) {
         this.isBacksprite = isUsed;
     }
+
+
     public void setFront_sprite(Sprite Front_sprite) {this.front_sprite = front_sprite;}
     public void setBack_sprite(Sprite Back_sprite){this.back_sprite = back_sprite;}
     public void setSize(int size) {this.size = size;}
     public void setDM(int DM) {this.DM = DM;}
     public void setMP(int MP) {this.MP = MP;}
+
+
     public void setSelected(boolean selected) {this.isSelected = selected;}
     public void setPos(Vector2f pos) {this.pos = pos;}
     public void setEnemySelected(boolean selected) {this.isEnemySelected = selected;}

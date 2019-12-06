@@ -19,11 +19,12 @@ public class GameStateManager {
 
     public static Vector2f map;
     public static int Now_Stage = 0;
-    public static final int PLAY = 0;
+    public static final int PLAY = 2;
     public static final int MENU = 1;
-    public static final int PAUSE = 2;
     public static final int GAMEOVER = 3;
-    public static final int SELECT = 4;
+    public static final int PAUSE = 4;
+    public static final int SELECT = 1;
+    public static final int INTRO = 0;
     public static final int now_enemy = 0;
 
     public static int player_map[][];
@@ -69,8 +70,8 @@ public class GameStateManager {
             states[MENU] = new MenuState(this);
         }
 
-        if(state == PAUSE) {
-            states[PAUSE] = new PauseState(this);
+        if(state == INTRO) {
+            states[INTRO] = new IntroState(this);
         }
 
         if(state == GAMEOVER) {
@@ -78,6 +79,10 @@ public class GameStateManager {
         }
         if(state == SELECT) {
             states[SELECT] = new SelectState(this,now_enemy);
+        }
+
+        if(state == PAUSE) {
+            states[PAUSE] = new PauseState(this);
         }
     }
 
@@ -100,9 +105,9 @@ public class GameStateManager {
 
     public void input(MouseHandler mouse, KeyHandler key) throws CloneNotSupportedException {
         for(int i=0;i<states.length;i++) {
-            if(states[i] != null) {
-                states[i].input(mouse,key);
-            }
+                if(states[i] != null) {
+                    states[i].input(mouse,key);
+                }
         }
     }
 

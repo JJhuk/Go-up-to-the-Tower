@@ -29,6 +29,7 @@ public class PlayState extends GameState {
     private Card[] enemy_cards;
     private Vector2f[] enemy_card_pos;
     private Vector2f[] pos_Selected_Cards;
+    public static boolean DrawAttack[][];
     private boolean player_armor;
     private boolean enemy_armor;
     private TimeManager tm;
@@ -41,11 +42,16 @@ public class PlayState extends GameState {
     public static Vector2f player_pre_pos;
     public static Vector2f enemy_pre_pos;
 
+    public static final int b_width = 150;
+    public static final int b_height = 80;
+
     private AttackSystemManager ASM;
     public static Vector2f map;
 
     private int nowindex;
     private boolean Timerstart;
+
+    private boolean isAttack;
 
     public PlayState(GameStateManager gsm) throws CloneNotSupportedException {
         super(gsm);
@@ -66,16 +72,11 @@ public class PlayState extends GameState {
             player.setHP(AttackSystemManager.Player_HP);
             player.setMP(AttackSystemManager.Player_MP);
         }
-
         makeEnemy();
         BackGround = new Sprite("entity/BackGround.png");
         ASM = new AttackSystemManager();
         setCards();
-
-
         System.out.println(GameStateManager.Now_Stage + "스테이지 입니다.");
-
-
     }
 
 
@@ -149,7 +150,6 @@ public class PlayState extends GameState {
     }
 
     private void drawString(Graphics2D g) {
-        //drawFPS(g);
         drawHPMP(g);
         drawSTAGE(g);
     }
@@ -158,7 +158,6 @@ public class PlayState extends GameState {
         String fps = GamePanel.frames + " FPS";
         Sprite.drawArray(g, fps, new Vector2f(GamePanel.width - fps.length() * 32, 32), 32, 24);
     }
-
 
     private void drawHPMP(Graphics2D g) {
         Sprite.drawArray(g, "HP : " + player.getHP(), new Vector2f(80, 30), 32, 24);
@@ -184,11 +183,15 @@ public class PlayState extends GameState {
     }
 
     public void open_playerCard() throws CloneNotSupportedException {
+        boolean isHit;
         switch (player_cards[nowindex].getAttribute()) {
             case Card.ATTACK_CARD :
-                if(ASM.PlayerAttack(player_cards[nowindex].getArrange())) {
+                isHit =ASM.PlayerAttack(player_cards[nowindex].getArrange());
+                isAttack = true;
+                if(isHit) {
                     System.out.println("공격 성공!");
                     getNowStage().setHP((Integer.parseInt(getNowStage().getHP()) - player_cards[nowindex].getDM()));
+
                 }
                 break;
             case Card.HEAL_CARD:
@@ -235,8 +238,6 @@ public class PlayState extends GameState {
             enemy.setMP(100);
     }
 
-
-
     public void enemy_move(Enemy enemy) throws CloneNotSupportedException {
         enemy_pre_pos = (Vector2f)enemy.getPos().clone();
         switch (enemy_cards[nowindex].getMove()) {
@@ -261,9 +262,12 @@ public class PlayState extends GameState {
 
 
     public void open_enemyCard() throws CloneNotSupportedException {
+        boolean isHit;
         switch (enemy_cards[nowindex].getAttribute()) {
             case Card.ATTACK_CARD :
-                if(ASM.PlayerAttack(enemy_cards[nowindex].getArrange())) {
+                isHit = ASM.EnemyAttack(enemy_cards[nowindex].getArrange());
+                isAttack = true;
+                if(isHit) {
                     System.out.println("상대방이 공격에 성공했습니다!");
                     player.setMP((Integer.parseInt(player.getHP()) - enemy_cards[nowindex].getDM()));
                 }
@@ -300,38 +304,48 @@ public class PlayState extends GameState {
             System.out.println("Pre");
         }
         if (mouse.getButton() == 1) {
-            System.out.println("x : " + mouse.getX() + " " + "y : " + mouse.getY());
-            if(nowindex!=3) {
-                player_cards[nowindex].setisBacksprite(false);
-                enemy_cards[nowindex].setisBacksprite(false);
-                Timer timer = new Timer();
-                TimerTask timerTask = new TimerTask() {
-                    @Override
-                    public void run() {
-                        System.out.println("Timer Start!");
-                        try {
-                            openCard();
-                        } catch (CloneNotSupportedException e) {
-                            e.printStackTrace();
-                        }
-                        timer.cancel();
-                        Timerstart = false;
-                    }
-                };
-                if(!Timerstart) {
-                    timer.schedule(timerTask,3000);
-                    Timerstart = true;
+            if(Integer.parseInt(player.getHP()) <= 0 || Integer.parseInt(getNowStage().getHP()) <= 0) {
+                if(Integer.parseInt(player.getHP()) <= 0) {
+                    //player lose
+                    gsm.pop(GameStateManager.SELECT);
+                    GameStateManager.Now_Stage++;
                 }
+                //Enemy lose
             }
-            else {  //끝
-                AttackSystemManager.player_pos = (Vector2f) player.getPos().clone();
-                AttackSystemManager.enemy_pos = (Vector2f)getNowStage().getPos().clone();
-                AttackSystemManager.Enemy_HP = Integer.parseInt(getNowStage().getHP());
-                AttackSystemManager.Enemy_MP = Integer.parseInt(getNowStage().getMP());
-                AttackSystemManager.Player_HP = Integer.parseInt(player.getHP());
-                AttackSystemManager.Player_MP = Integer.parseInt(player.getMP());
-                gsm.pop(GameStateManager.PLAY);
-                gsm.add(GameStateManager.SELECT);
+            else {
+                System.out.println("x : " + mouse.getX() + " " + "y : " + mouse.getY());
+                if(nowindex!=3) {
+                    player_cards[nowindex].setisBacksprite(false);
+                    enemy_cards[nowindex].setisBacksprite(false);
+                    Timer timer = new Timer();
+                    TimerTask timerTask = new TimerTask() {
+                        @Override
+                        public void run() {
+                            System.out.println("Timer Start!");
+                            try {
+                                openCard();
+                            } catch (CloneNotSupportedException e) {
+                                e.printStackTrace();
+                            }
+                            timer.cancel();
+                            Timerstart = false;
+                        }
+                    };
+                    if(!Timerstart) {
+                        timer.schedule(timerTask,3000);
+                        Timerstart = true;
+                    }
+                }
+                else {  //끝
+                    AttackSystemManager.player_pos = (Vector2f) player.getPos().clone();
+                    AttackSystemManager.enemy_pos = (Vector2f)getNowStage().getPos().clone();
+                    AttackSystemManager.Enemy_HP = Integer.parseInt(getNowStage().getHP());
+                    AttackSystemManager.Enemy_MP = Integer.parseInt(getNowStage().getMP());
+                    AttackSystemManager.Player_HP = Integer.parseInt(player.getHP());
+                    AttackSystemManager.Player_MP = Integer.parseInt(player.getMP());
+                    gsm.pop(GameStateManager.PLAY);
+                    gsm.add(GameStateManager.SELECT);
+                }
             }
         }
     }

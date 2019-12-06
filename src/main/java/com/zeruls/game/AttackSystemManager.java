@@ -1,6 +1,7 @@
 package main.java.com.zeruls.game;
 import main.java.com.zeruls.game.states.Card;
 import main.java.com.zeruls.game.states.GameStateManager;
+import main.java.com.zeruls.game.states.PlayState;
 import main.java.com.zeruls.game.util.Vector2f;
 
 public class AttackSystemManager  {
@@ -156,24 +157,28 @@ public class AttackSystemManager  {
         return CheckAttack(np, GameStateManager.player_map,arr);
     }
 
+
     private boolean CheckAttack(Vector2f np, int[][] map , boolean arr[][]) {
         System.out.println("Player x: " + getPlayerIndex().x + " y: " +getPlayerIndex().y);
         System.out.println("Enemy x: "+getEnemyIndex().x + "y: "+getEnemyIndex().y);
+        PlayState.DrawAttack = new boolean[3][4];
+        boolean isHeat = false;
         for(int i = (int)np.x-1,i1 = 0; i<=(int)np.x+1;i++,i1++) {
             for(int j = (int)np.y -1,j1 = 0; j<=(int)np.y+1;j++,j1++) {
                 System.out.println("SKILL Check x: " + i1 + " y: " +j1);
                 System.out.println("Arrange Check x: "+i + "y: "+j);
                 if(arr[i1][j1]) {   //공격 범위가 유효할때
                     if(i>=0 && i<3 && j>=0  && j<4) {
+                        PlayState.DrawAttack[i][j] = true;
                         if(map[i][j] != EMPTY) {
+                            isHeat = true;
                             System.out.println(i + ", " +j + "에서 상대방이 맞음");
-                            return true;
                         }
                     }
                 }
             }
         }
-        return false;
+        return isHeat;
     }
 
 

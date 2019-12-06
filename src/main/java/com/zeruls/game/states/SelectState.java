@@ -85,13 +85,13 @@ public class SelectState extends GameState{
         return new Card( new Sprite(sprite_path), new Vector2f(x, y), size);
     }
 
-    private void SelectEnemyCard(int card,int index) throws CloneNotSupportedException {
+    private void SelectEnemyCard(int card,int seed) throws CloneNotSupportedException {
         isNormal = (int)(Math.random()*2);
         System.out.println(isNormal);
         if(isNormal == 0) { //스킬카드
-            index = (int)(Math.random()*card) + index;
+            index = (int)(Math.random()*card) + seed;
             while(Cards[index].isEnemySelected())
-                index = (int)(Math.random()*card) + index;
+                index = (int)(Math.random()*card) + seed;
             enemey_cards.add((Card)Cards[index].clone());
             Cards[index].setEnemySelected(true);
         }
