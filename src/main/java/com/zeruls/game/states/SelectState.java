@@ -22,7 +22,7 @@ public class SelectState extends GameState{
     public final int MAGICTION_CARDS = 4;
     public final int NORMAL_CARDS = 7;
 
-    public static final int DEVIL = 3;
+    public static final int DEVIL = 3;      //3 0 2 1
     public static final int SKELETON = 0;
     public static final int MAGICTION = 2;
     public static final int DEATHKNIGHT = 1;
@@ -83,6 +83,25 @@ public class SelectState extends GameState{
         String sprite_path = getPath(kind, path);
         int size = getSize();
         return new Card( new Sprite(sprite_path), new Vector2f(x, y), size);
+    }
+
+    private void SelectEnemyCard(int card,int index) throws CloneNotSupportedException {
+        isNormal = (int)(Math.random()*2);
+        System.out.println(isNormal);
+        if(isNormal == 0) { //스킬카드
+            index = (int)(Math.random()*card) + index;
+            while(Cards[index].isEnemySelected())
+                index = (int)(Math.random()*card) + index;
+            enemey_cards.add((Card)Cards[index].clone());
+            Cards[index].setEnemySelected(true);
+        }
+        else {  //보통카드
+            index = (int)(Math.random()*6) + 1;
+            while(Cards[index].isEnemySelected())
+                index = (int)(Math.random()*6) + 1;
+            enemey_cards.add((Card)Cards[index].clone());
+            Cards[index].setEnemySelected(true);
+        }
     }
 
 
@@ -187,70 +206,17 @@ public class SelectState extends GameState{
         for(int i=0;i<3;i++) {  //데스나이트 10~13, 메지션 14~17, 데빌 18~21  -> normal카드 1~7 , 스켈레톤 22~24
             switch (ANAMY) {
                 case SKELETON:
-                    isNormal = (int)(Math.random()*2);
-                    System.out.println(isNormal);
-                    if(isNormal == 0) { //스킬카드
-                        index = (int)(Math.random()*3) + 22;
-                        while(Cards[index].isEnemySelected())
-                            index = (int)(Math.random()*3) + 22;
-                        enemey_cards.add((Card)Cards[index].clone());
-                        Cards[index].setEnemySelected(true);
-                    }
-                    else {  //보통카드
-                        index = (int)(Math.random()*7) + 1;
-                        while(Cards[index].isEnemySelected())
-                            index = (int)(Math.random()*7) + 1;
-                        enemey_cards.add((Card)Cards[index].clone());
-                        Cards[index].setEnemySelected(true);
-                    }
+                    SelectEnemyCard(3,22);
                     break;
                 case DEATHKNIGHT:
-                    isNormal = (int)(Math.random()*2);
-                    if(isNormal == 0) {
-                        index = (int)(Math.random()*4) + 10;
-                        enemey_cards.add((Card)Cards[index].clone());
-                        Cards[index].setEnemySelected(true);
-                    }
-                    else {
-                        index = (int)(Math.random()*7) + 1;
-                        enemey_cards.add((Card)Cards[index].clone());
-                        Cards[index].setEnemySelected(true);
-                    }
-                break;
+                    SelectEnemyCard(4,10);
+                    break;
                 case MAGICTION:
-                    isNormal = (int)(Math.random()*2);
-                    if(isNormal == 0) {
-                        index = (int)(Math.random()*4) + 14;
-                        while(Cards[index].isEnemySelected())
-                            index = (int)(Math.random()*4) + 14;
-                        enemey_cards.add((Card)Cards[index].clone());
-                        Cards[index].setEnemySelected(true);
-                    }
-                    else {
-                        index = (int)(Math.random()*7) + 1;
-                        while(Cards[index].isEnemySelected())
-                            index = (int)(Math.random()*7) + 1;
-                        enemey_cards.add((Card)Cards[index].clone());
-                        Cards[index].setEnemySelected(true);
-                    }
-                break;
+                    SelectEnemyCard(4,14);
+                    break;
                 case DEVIL:
-                    isNormal = (int)(Math.random()*2);
-                    if(isNormal == 0) {
-                        index = (int)(Math.random()*4) + 18;
-                        while(Cards[index].isEnemySelected())
-                            index = (int)(Math.random()*4) + 18;
-                        enemey_cards.add((Card)Cards[index].clone());
-                        Cards[index].setEnemySelected(true);
-                    }
-                    else {
-                        index = (int)(Math.random()*7) + 1;
-                        while(Cards[index].isEnemySelected())
-                            index = (int)(Math.random()*7) + 1;
-                        enemey_cards.add((Card)Cards[index].clone());
-                        Cards[index].setEnemySelected(true);
-                    }
-                break;
+                    SelectEnemyCard(4,18);
+                    break;
             }
         }
     }

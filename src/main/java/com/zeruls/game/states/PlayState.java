@@ -263,7 +263,10 @@ public class PlayState extends GameState {
     public void open_enemyCard() throws CloneNotSupportedException {
         switch (enemy_cards[nowindex].getAttribute()) {
             case Card.ATTACK_CARD :
-                //ASM.
+                if(ASM.PlayerAttack(enemy_cards[nowindex].getArrange())) {
+                    System.out.println("상대방이 공격에 성공했습니다!");
+                    player.setMP((Integer.parseInt(player.getHP()) - enemy_cards[nowindex].getDM()));
+                }
                 break;
             case Card.HEAL_CARD:
                 enemy_heal(getNowStage());
