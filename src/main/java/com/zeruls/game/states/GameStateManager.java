@@ -19,36 +19,28 @@ public class GameStateManager {
 
     public static Vector2f map;
     public static int Now_Stage = 0;
-    public static final int PLAY = 2;
+    public static final int PLAY = 3;
     public static final int MENU = 1;
-    public static final int GAMEOVER = 3;
+    public static final int GAMEOVER = 5;
     public static final int PAUSE = 4;
-    public static final int SELECT = 1;
+    public static final int SELECT = 2;
     public static final int INTRO = 0;
-    public static final int now_enemy = 0;
+
 
     public static int player_map[][];
     public static int enemy_map[][];
-    public static Vector2f player_pos;
-    public static Vector2f enemy_pos;
-    public static int Player_HP;
-    public static int Player_MP;
-    public static int Enemy_HP;
-    public static int Enemy_MP;
-
-    public int onTopState = 0;
 
     public static Font font;
 
 
-    public GameStateManager() throws CloneNotSupportedException {
+    public GameStateManager() {
 
         map = new Vector2f(GamePanel.width,GamePanel.height);
 
         font = new Font("font/font.png",10,10);
         Sprite.currentFont = font;
-        states = new GameState[5];
-        states[SELECT] = new SelectState(this,Now_Stage);
+        states = new GameState[6];
+        states[INTRO] = new IntroState(this);
     }
 
     public boolean getState(int state) {
@@ -78,12 +70,14 @@ public class GameStateManager {
             states[GAMEOVER] = new GameOverState(this);
         }
         if(state == SELECT) {
-            states[SELECT] = new SelectState(this,now_enemy);
+            states[SELECT] = new SelectState(this,Now_Stage);
         }
 
         if(state == PAUSE) {
             states[PAUSE] = new PauseState(this);
         }
+
+
     }
 
     public void addAndpop(int state) throws CloneNotSupportedException {
