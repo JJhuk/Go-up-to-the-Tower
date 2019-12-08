@@ -97,7 +97,7 @@ public class GameStateManager {
         }
     }
 
-    public void input(MouseHandler mouse, KeyHandler key) throws CloneNotSupportedException {
+    public void input(MouseHandler mouse, KeyHandler key) throws CloneNotSupportedException, InterruptedException {
         for(int i=0;i<states.length;i++) {
                 if(states[i] != null) {
                     states[i].input(mouse,key);

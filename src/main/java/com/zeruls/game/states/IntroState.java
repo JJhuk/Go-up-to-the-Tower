@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 public class IntroState extends GameState {
     private Sprite background[];
     private int introindex;
+    private int count;
     private MusicPlayer player;
     public IntroState(GameStateManager gsm) {
         super(gsm);
@@ -27,6 +28,7 @@ public class IntroState extends GameState {
         }
         player = new MusicPlayer("audio/Intro.mp3",true);
         player.start();
+        count = 0;
     }
 
     @Override
@@ -38,7 +40,12 @@ public class IntroState extends GameState {
     public void input(MouseHandler mouse, KeyHandler key) throws CloneNotSupportedException {
         if(mouse.getButton() == 1) {
             if(introindex < background.length) {
-                introindex++;
+                if(count != 4)
+                    count++;
+                else {
+                    count = 0;
+                    introindex++;
+                }
             }
             else{
                 player.close();

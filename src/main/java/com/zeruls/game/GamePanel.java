@@ -111,7 +111,7 @@ public class GamePanel extends JPanel implements Runnable{
 			if(deltaU >=1) {
                 try {
                     input(mouse,key);
-                } catch (CloneNotSupportedException e) {
+                } catch (CloneNotSupportedException | InterruptedException e) {
                     e.printStackTrace();
                 }
                 try {
@@ -141,7 +141,7 @@ public class GamePanel extends JPanel implements Runnable{
 		gsm.update();
 	}
 	
-	public void input(MouseHandler mouse, KeyHandler key) throws CloneNotSupportedException {
+	public void input(MouseHandler mouse, KeyHandler key) throws CloneNotSupportedException, InterruptedException {
 
 		gsm.input(mouse, key);
 	}
