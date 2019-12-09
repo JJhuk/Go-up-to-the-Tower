@@ -46,8 +46,8 @@ public abstract class Entitiy {
         this.sprite = sprite;
         pos = orgin;
         this.size = size;
-        HP = 70;
-        MP = 60;
+        HP = 100;
+        MP = 100;
         ani = new Animation();
         setAnimation(RIGHT,sprite.getSpriteArray(RIGHT),10);
     }

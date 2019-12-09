@@ -186,7 +186,7 @@ public class PlayState extends GameState {
         boolean isHit;
         switch (player_cards[nowindex].getAttribute()) {
             case Card.ATTACK_CARD :
-               if(Integer.parseInt(player.getMP())>=enemy_cards[nowindex].getMP()) {
+               if(Integer.parseInt(player.getMP())>enemy_cards[nowindex].getMP()) {
                    player.setMP((Integer.parseInt(player.getMP()) - player_cards[nowindex].getMP()));
                    isHit =ASM.PlayerAttack(player_cards[nowindex].getArrange(),player.getisReverse());
                    isAttack = true;
@@ -280,7 +280,7 @@ public class PlayState extends GameState {
         boolean isHit;
         switch (enemy_cards[nowindex].getAttribute()) {
             case Card.ATTACK_CARD :
-                if(Integer.parseInt(getNowStage().getMP())>=enemy_cards[nowindex].getMP()) {
+                if(Integer.parseInt(getNowStage().getMP())>enemy_cards[nowindex].getMP()) {
                     getNowStage().setMP((Integer.parseInt(getNowStage().getMP())- enemy_cards[nowindex].getMP()));
                     isHit = ASM.EnemyAttack(enemy_cards[nowindex].getArrange(),getNowStage().getisReverse());
                     isAttack = true;
