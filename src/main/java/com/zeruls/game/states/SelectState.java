@@ -3,6 +3,7 @@ package main.java.com.zeruls.game.states;
 import main.java.com.zeruls.game.graphics.Sprite;
 import main.java.com.zeruls.game.util.KeyHandler;
 import main.java.com.zeruls.game.util.MouseHandler;
+import main.java.com.zeruls.game.util.MusicPlayer;
 import main.java.com.zeruls.game.util.Vector2f;
 
 
@@ -39,13 +40,12 @@ public class SelectState extends GameState{
     private Vector2f StartButton_pos[];     //rectangle 기준 왼쪽위 1 오른쪽위 2 오른쪽 밑 3 왼쪽 밑4
     private Vector2f ResetButton_pos[];
 
-
     private  Vector2f pos_Selected_Cards[];    //원래 카드들의 위치
     private  int isSelected_Cards[];   //-1일때 안고름
     private Queue<Integer> selected_card_index;
-
     private int isNormal;
     private int index;
+    private MusicPlayer musicPlayer;
 
     public String getPath(String kind, String path)
     {
@@ -123,6 +123,7 @@ public class SelectState extends GameState{
         pos_Selected_Cards[0] = new Vector2f(300,600);
         pos_Selected_Cards[1] = new Vector2f(165,600);
         pos_Selected_Cards[2] = new Vector2f(30,600);
+        musicPlayer = new MusicPlayer("audio/SoundEffect/Button.mp3",false);
 
 
         boolean arrange[][][] = {
@@ -272,6 +273,8 @@ public class SelectState extends GameState{
     private void Button_Check(float x, float y) throws CloneNotSupportedException {
         if(x>= StartButton_pos[0].x && x<= StartButton_pos[1].x) {
             if(y>= StartButton_pos[0].y && y<= StartButton_pos[3].y) {
+                musicPlayer.start();
+                musicPlayer = new MusicPlayer("audio/SoundEffect/Button.mp3",false);
                 System.out.println("Start Button Selected!");
                 if(player_cards.size() == 3) {
                     System.out.println("3개 다채웠군요!");
@@ -287,6 +290,8 @@ public class SelectState extends GameState{
             }
             else if (y>= ResetButton_pos[0].y && y<= ResetButton_pos[3].y) {
                 System.out.println("Reset Button Clicked");
+                musicPlayer.start();
+                musicPlayer = new MusicPlayer("audio/SoundEffect/Button.mp3",false);
                 for(int i=0;i<3;i++) {
                     if (player_cards.peek() != null && selected_card_index.peek() != null) {
                         player_cards.peek().setSelected(false);

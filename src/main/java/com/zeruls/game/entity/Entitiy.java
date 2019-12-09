@@ -28,9 +28,7 @@ public abstract class Entitiy {
     protected boolean down;
     protected boolean right;
     protected boolean left;
-    protected boolean attack;
-    protected int attackSpeed;
-    protected int attackDuration;
+    protected boolean isReverse;   //지금 오른쪽 왼쪽을 바라보고 있느냐
     
     protected float dx;
     protected float dy;
@@ -67,7 +65,7 @@ public abstract class Entitiy {
     public void setDeacc(float f) {deacc = f;}
 
     public void setHP(int HP) {this.HP = HP;}
-
+    public void setisReverse(boolean isLeft) {this.isReverse = isReverse;}
     public void setMP(int MP) {this.MP = MP;}
     public void setPos(Vector2f pos) {this.pos = pos;}
     public int getSize() { return size; }
@@ -78,6 +76,7 @@ public abstract class Entitiy {
 
     public String getHP() {return Integer.toString(HP);}
     public String getMP() {return Integer.toString(MP);}
+    public boolean getisReverse() {return this.isReverse;}
 
     public void setAnimation(int i, BufferedImage[] frames, int delay) {
         currentAnimation = i;

@@ -18,7 +18,6 @@ public class Enemy extends Entitiy {
         super.acc = 1f;
         super.maxSpeed = 3f;
         this.r = 135;
-
         //ense = new AABB(new Vector2f(orgin.x - size/2,orgin.y - size / 2),r,r);
     }
 

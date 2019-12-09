@@ -14,18 +14,12 @@ public class AttackSystemManager  {
     public static int Enemy_MP;
     private final int CHAR = 1;
     private final int EMPTY = 0;
-
-
-
-
     private final int UP = 3;
     private final int DOWN = 2;
     private final int RIGHT = 0;
     private final int LEFT = 1;
-
     public static int dx = 150;
     public static int dy = 75;
-
 
     public void ResetPlayerMap() {
         for(int i=0;i<3;i++) {
@@ -132,31 +126,57 @@ public class AttackSystemManager  {
             case UP :
                 if(Enemy_swap(getEnemyIndex(),new Vector2f(getEnemyIndex().x-1,getEnemyIndex().y)))
                     return true;
+                else
+                    return false;
             case DOWN:
                 if(Enemy_swap(getEnemyIndex(),new Vector2f(getEnemyIndex().x+1,getEnemyIndex().y)))
                     return true;
+                else
+                    return false;
             case LEFT:
                 if(Enemy_swap(getEnemyIndex(),new Vector2f(getEnemyIndex().x,getEnemyIndex().y-1)))
                     return true;
+                else
+                    return false;
             case RIGHT:
                 if(Enemy_swap(getEnemyIndex(),new Vector2f(getEnemyIndex().x,getEnemyIndex().y+1)))
                     return true;
+                else
+                    return false;
             default:
                 return false;
         }
     }
 
-
-    public boolean PlayerAttack(boolean arr[][]) {
+    public boolean PlayerAttack(boolean arr[][], boolean isReverse) {
         Vector2f np = getPlayerIndex();
-        return CheckAttack(np, GameStateManager.enemy_map,arr);
+        if(isReverse)
+            return CheckAttack(np, GameStateManager.enemy_map,ReverseArr(arr));
+        else
+            return CheckAttack(np, GameStateManager.enemy_map,arr);
     }
 
-    public boolean EnemyAttack(boolean arr[][]) {
+    public boolean EnemyAttack(boolean arr[][] , boolean isReverse) {
         Vector2f np = getEnemyIndex();
-        return CheckAttack(np, GameStateManager.player_map,arr);
+        if(isReverse)
+            return CheckAttack(np, GameStateManager.player_map,ReverseArr(arr));
+        else
+            return CheckAttack(np,GameStateManager.player_map,arr);
     }
 
+    public boolean[][] ReverseArr(boolean arr[][]) {
+
+        boolean[][] result = new boolean[3][3];
+
+        result[0][0] = arr[0][1];
+        result[1][0] = arr[1][2];
+        result[2][0] = arr[2][2];
+        result[0][2] = arr[0][0];
+        result[1][2] = arr[1][0];
+        result[2][2] = arr[2][0];
+
+        return result;
+    }
 
     private boolean CheckAttack(Vector2f np, int[][] map , boolean arr[][]) {
         System.out.println("Player x: " + getPlayerIndex().x + " y: " +getPlayerIndex().y);

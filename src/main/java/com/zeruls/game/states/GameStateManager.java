@@ -66,9 +66,6 @@ public class GameStateManager {
             states[INTRO] = new IntroState(this);
         }
 
-        if(state == GAMEOVER) {
-            states[GAMEOVER] = new GameOverState(this);
-        }
         if(state == SELECT) {
             states[SELECT] = new SelectState(this,Now_Stage);
         }
@@ -78,6 +75,10 @@ public class GameStateManager {
         }
 
 
+    }
+
+    public void add(int state,boolean isBadEnding) {
+        states[state] = new GameOverState(this,isBadEnding);
     }
 
     public void addAndpop(int state) throws CloneNotSupportedException {

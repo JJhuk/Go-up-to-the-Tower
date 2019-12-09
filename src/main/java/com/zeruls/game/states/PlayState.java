@@ -186,13 +186,19 @@ public class PlayState extends GameState {
         boolean isHit;
         switch (player_cards[nowindex].getAttribute()) {
             case Card.ATTACK_CARD :
-                isHit =ASM.PlayerAttack(player_cards[nowindex].getArrange());
-                isAttack = true;
-                if(isHit) {
-                    System.out.println("공격 성공!");
-                    getNowStage().setHP((Integer.parseInt(getNowStage().getHP()) - player_cards[nowindex].getDM()));
+               if(Integer.parseInt(player.getMP())>=enemy_cards[nowindex].getMP()) {
+                   player.setMP((Integer.parseInt(player.getMP()) - player_cards[nowindex].getMP()));
+                   isHit =ASM.PlayerAttack(player_cards[nowindex].getArrange(),player.getisReverse());
+                   isAttack = true;
+                   if(isHit) {
+                       System.out.println("공격 성공!");
+                       getNowStage().setHP((Integer.parseInt(getNowStage().getHP()) - player_cards[nowindex].getDM()));
 
-                }
+                   }
+               }
+               else {
+                   System.out.println("마나가 부족합니다!");
+               }
                 break;
             case Card.HEAL_CARD:
                 player.setHP(Integer.parseInt(player.getHP()) + player_cards[nowindex].getPlus_hp());
@@ -214,12 +220,17 @@ public class PlayState extends GameState {
                             player.setDir(DOWN);
                         break;
                     case LEFT:
-                        if(ASM.MovePlayer(LEFT))
+                        if(ASM.MovePlayer(LEFT)) {
                             player.setDir(LEFT);
+                            player.setisReverse(true);
+                        }
+
                         break;
                     case RIGHT:
-                        if(ASM.MovePlayer(RIGHT))
+                        if(ASM.MovePlayer(RIGHT)){
+                            player.setisReverse(false);
                             player.setDir(RIGHT);
+                        }
                         break;
                 }
                 break;
@@ -250,12 +261,16 @@ public class PlayState extends GameState {
                     getNowStage().setDir(DOWN);
                 break;
             case LEFT:
-                if(ASM.MoveEnemy(LEFT))
+                if(ASM.MoveEnemy(LEFT)) {
                     getNowStage().setDir(LEFT);
+                    getNowStage().setisReverse(false);
+                }
                 break;
             case RIGHT:
-                if(ASM.MoveEnemy(RIGHT))
+                if(ASM.MoveEnemy(RIGHT)) {
                     getNowStage().setDir(RIGHT);
+                    getNowStage().setisReverse(true);
+                }
                 break;
         }
     }
@@ -265,11 +280,17 @@ public class PlayState extends GameState {
         boolean isHit;
         switch (enemy_cards[nowindex].getAttribute()) {
             case Card.ATTACK_CARD :
-                isHit = ASM.EnemyAttack(enemy_cards[nowindex].getArrange());
-                isAttack = true;
-                if(isHit) {
-                    System.out.println("상대방이 공격에 성공했습니다!");
-                    player.setMP((Integer.parseInt(player.getHP()) - enemy_cards[nowindex].getDM()));
+                if(Integer.parseInt(getNowStage().getMP())>=enemy_cards[nowindex].getMP()) {
+                    getNowStage().setMP((Integer.parseInt(getNowStage().getMP())- enemy_cards[nowindex].getMP()));
+                    isHit = ASM.EnemyAttack(enemy_cards[nowindex].getArrange(),getNowStage().getisReverse());
+                    isAttack = true;
+                    if(isHit) {
+                        System.out.println("상대방이 공격에 성공했습니다!");
+                        player.setHP((Integer.parseInt(player.getHP()) - enemy_cards[nowindex].getDM()));
+                    }
+                }
+                else {
+                    System.out.println("마나가 부족합니다!");
                 }
                 break;
             case Card.HEAL_CARD:
@@ -307,8 +328,23 @@ public class PlayState extends GameState {
             if(Integer.parseInt(player.getHP()) <= 0 || Integer.parseInt(getNowStage().getHP()) <= 0) {
                 if(Integer.parseInt(player.getHP()) <= 0) {
                     //player lose
-                    gsm.pop(GameStateManager.SELECT);
-                    GameStateManager.Now_Stage++;
+                    gsm.pop(GameStateManager.PLAY);
+                    gsm.add(GameStateManager.GAMEOVER,true);
+                }
+                if( GameStateManager.Now_Stage++ >= 3) {
+                    AttackSystemManager.enemy_pos = null;
+                    AttackSystemManager.player_pos = null;
+                    ASM = null;
+                    gsm.pop(GameStateManager.PLAY);
+                    gsm.add(GameStateManager.GAMEOVER,false);
+                }
+                else {
+                    GameStateManager.player_map = null;
+                    GameStateManager.enemy_map = null;
+                    AttackSystemManager.enemy_pos = null;
+                    AttackSystemManager.player_pos = null;
+                    gsm.pop(GameStateManager.PLAY);
+                    gsm.add(GameStateManager.SELECT);
                 }
                 //Enemy lose
             }

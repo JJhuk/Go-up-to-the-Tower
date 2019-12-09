@@ -16,8 +16,8 @@ public class Player extends Entitiy {
     public Player(Sprite sprite, Vector2f orgin, int size) {
         super(sprite, orgin, size);
         // TODO Auto-generated constructor stub
-        acc = 2f;   //2f
-        maxSpeed = 3f;
+        super.acc = 2f;   //2f
+        super.maxSpeed = 3f;
     }
 
     public void resetPosition() {
@@ -69,41 +69,9 @@ public class Player extends Entitiy {
         if(mouse.getButton() == 1) {
             System.out.println("Player: " + pos.x + ", " + pos.y);
         }
-        
-        /*if(key.up.down) {
-            up = true;
-        } else {
-            up = false;
-        }
-       if(key.down.down) {
-            down = true;
-        }else {
-            down = false;
-        }
-        if(key.left.down) {
-            left = true;
-        }else {
-            left = false;
-        }
-        if(key.right.down) {
-            right = true;
-        }else {
-            right = false;
-        }
-        if(key.attack.down) {
-            attack = true;
-        }else {
-            attack = false;
-        }
-        if(up && down) {
-            up = false;
-            down = false;
-        }
-        if(right && left) {
-            right = false;
-            left = false;
-        }*/
+
     }
+
 
 
     

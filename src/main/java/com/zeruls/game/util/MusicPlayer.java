@@ -51,8 +51,8 @@ public class MusicPlayer extends Thread {
                 fis = new FileInputStream(file);
                 bis = new BufferedInputStream(fis);
                 player = new Player(bis);
-
             }while (isLoop);
+            close();
         }catch (Exception e) {
             System.out.println(e.getMessage());
         }
