@@ -4,21 +4,16 @@ import main.java.com.zeruls.game.GamePanel;
 import main.java.com.zeruls.game.entity.Enemy;
 import main.java.com.zeruls.game.entity.Player;
 import main.java.com.zeruls.game.graphics.Sprite;
-import main.java.com.zeruls.game.util.KeyHandler;
-import main.java.com.zeruls.game.util.MouseHandler;
-import main.java.com.zeruls.game.util.Vector2f;
+import main.java.com.zeruls.game.util.*;
 import main.java.com.zeruls.game.graphics.Font;
 import main.java.com.zeruls.game.AttackSystemManager;
-import main.java.com.zeruls.game.util.TimeManager;
+
 import java.awt.*;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.sql.Time;
 
 
 public class PlayState extends GameState {
-
-    private Font font;
     private Player player;
     private Sprite BackGround;
     private Enemy Magiction;
@@ -30,8 +25,6 @@ public class PlayState extends GameState {
     private Vector2f[] enemy_card_pos;
     private Vector2f[] pos_Selected_Cards;
     public static boolean DrawAttack[][];
-    private boolean player_armor;
-    private boolean enemy_armor;
     private TimeManager tm;
 
     public final static int UP = 3;
@@ -42,16 +35,16 @@ public class PlayState extends GameState {
     public static Vector2f player_pre_pos;
     public static Vector2f enemy_pre_pos;
 
-    public static final int b_width = 150;
-    public static final int b_height = 80;
-
     private AttackSystemManager ASM;
     public static Vector2f map;
 
     private int nowindex;
     private boolean Timerstart;
+    private boolean player_armor;
+    private boolean enemy_armor;
 
-    private boolean isAttack;
+
+    private MusicPlayer Attacked_Sound;
 
     public PlayState(GameStateManager gsm) throws CloneNotSupportedException {
         super(gsm);
@@ -61,10 +54,9 @@ public class PlayState extends GameState {
         pos_Selected_Cards[0] = new Vector2f(300,600);
         pos_Selected_Cards[1] = new Vector2f(165,600);
         pos_Selected_Cards[2] = new Vector2f(30,600);
-        player_armor = false;
-        enemy_armor = false;
         nowindex = 0;
         map = new Vector2f();
+        Attacked_Sound = new MusicPlayer("audio/SoundEffect/Attacked.mp3",false);
         if(AttackSystemManager.enemy_pos == null)
             player = new Player(new Sprite("entity/PlayerFormatted.png"), new Vector2f(250, 350), 64); //map's vector is 0
         else {
@@ -73,7 +65,7 @@ public class PlayState extends GameState {
             player.setMP(AttackSystemManager.Player_MP);
         }
         makeEnemy();
-        BackGround = new Sprite("entity/BackGround.png");
+        BackGround = new Sprite("entity/PlayBackground.png");
         ASM = new AttackSystemManager();
         setCards();
         System.out.println(GameStateManager.Now_Stage + "스테이지 입니다.");
@@ -186,15 +178,16 @@ public class PlayState extends GameState {
         boolean isHit;
         switch (player_cards[nowindex].getAttribute()) {
             case Card.ATTACK_CARD :
-               if(Integer.parseInt(player.getMP())>enemy_cards[nowindex].getMP()) {
+               if(Integer.parseInt(player.getMP())>player_cards[nowindex].getMP()) {
+                   Attacked_Sound.start();
                    player.setMP((Integer.parseInt(player.getMP()) - player_cards[nowindex].getMP()));
                    isHit =ASM.PlayerAttack(player_cards[nowindex].getArrange(),player.getisReverse());
-                   isAttack = true;
                    if(isHit) {
                        System.out.println("공격 성공!");
                        getNowStage().setHP((Integer.parseInt(getNowStage().getHP()) - player_cards[nowindex].getDM()));
 
                    }
+                   Attacked_Sound = new MusicPlayer("audio/SoundEffect/Attacked.mp3",false);
                }
                else {
                    System.out.println("마나가 부족합니다!");
@@ -283,7 +276,6 @@ public class PlayState extends GameState {
                 if(Integer.parseInt(getNowStage().getMP())>enemy_cards[nowindex].getMP()) {
                     getNowStage().setMP((Integer.parseInt(getNowStage().getMP())- enemy_cards[nowindex].getMP()));
                     isHit = ASM.EnemyAttack(enemy_cards[nowindex].getArrange(),getNowStage().getisReverse());
-                    isAttack = true;
                     if(isHit) {
                         System.out.println("상대방이 공격에 성공했습니다!");
                         player.setHP((Integer.parseInt(player.getHP()) - enemy_cards[nowindex].getDM()));
@@ -389,8 +381,10 @@ public class PlayState extends GameState {
     public void render(Graphics2D g) {
         Sprite.drawImg(g, BackGround.getSprite(), new Vector2f(0, 0), 1024, 768);
         drawString(g);
-        player.render(g);
-        drawEnemy(g);
+        if(Integer.parseInt(player.getHP()) > 0)
+            player.render(g);
+        if(Integer.parseInt(getNowStage().getHP())>0)
+            drawEnemy(g);
         for(int i=0;i<3;i++) {
             player_cards[i].render(g);
             enemy_cards[i].render(g);
