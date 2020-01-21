@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="untitled:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/untitled_jar</output-path>
+    <root id="archive" name="untitled.jar">
+      <element id="module-output" name="untitled" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/JLayer1.0.1/jl1.0.1.jar" path-in-jar="/" />
+      <element id="library" level="application" name="jl1.0.1" />
+    </root>
+  </artifact>
+</component>
