@@ -1,6 +1,6 @@
-package main.java.com.zeruls.game.util;
+package main.java.com.game.util;
 
-import main.java.com.zeruls.game.GamePanel;
+import main.java.com.game.GamePanel;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

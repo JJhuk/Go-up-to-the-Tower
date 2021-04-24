@@ -1,35 +1,23 @@
-package main.java.com.zeruls.game;
-import main.java.com.zeruls.game.states.Card;
-import main.java.com.zeruls.game.states.GameStateManager;
-import main.java.com.zeruls.game.states.PlayState;
-import main.java.com.zeruls.game.util.Vector2f;
+package main.java.com.game;
+import main.java.com.game.entity.Direction;
+import main.java.com.game.util.Vector2f;
+import main.java.com.game.states.GameStateManager;
+import main.java.com.game.states.PlayState;
 
 public class AttackSystemManager  {
 
-    public static Object enemy_pos;
+    public static Vector2f enemy_pos;
+    public static Vector2f player_pos;
     public static int Player_HP;
     public static int Player_MP;
     public static int Enemy_HP;
-    public static Object player_pos;
     public static int Enemy_MP;
     private final int CHAR = 1;
     private final int EMPTY = 0;
-    private final int UP = 3;
-    private final int DOWN = 2;
-    private final int RIGHT = 0;
-    private final int LEFT = 1;
     public static int dx = 150;
     public static int dy = 75;
 
-    public void ResetPlayerMap() {
-        for(int i=0;i<3;i++) {
-            for(int j =0;j<4;j++) {
-                GameStateManager.player_map[i][j] = EMPTY;
-            }
-        }
-    }
-
-    public void ResetAnamyMap() {
+    public void ResetEnemyMap() {
         for(int i=0;i<3;i++) {
             for(int j=0;j<4;j++) {
                 GameStateManager.enemy_map[i][j] = EMPTY;
@@ -42,31 +30,28 @@ public class AttackSystemManager  {
         if(GameStateManager.player_map==null && GameStateManager.enemy_map ==null) {
             GameStateManager.player_map = new int[3][4];
             GameStateManager.enemy_map = new int[3][4];
-            ResetAnamyMap();
-            ResetAnamyMap();
+            ResetEnemyMap();
+            ResetEnemyMap();
             GameStateManager.player_map[1][0] = CHAR;
             GameStateManager.enemy_map[1][3] = CHAR;
         }
     }
 
-    //retrun to pos xy
-    public boolean Player_swap(Vector2f begin, Vector2f end) {
-        return swap_array(begin, end, GameStateManager.player_map);
+    public void Player_swap(Vector2f begin, Vector2f end) {
+        swap_array(begin, end, GameStateManager.player_map);
     }
 
-    public boolean Enemy_swap(Vector2f begin, Vector2f end) {
-        return swap_array(begin, end, GameStateManager.enemy_map);
+    public void Enemy_swap(Vector2f begin, Vector2f end) {
+        swap_array(begin, end, GameStateManager.enemy_map);
     }
 
-    private boolean swap_array(Vector2f begin, Vector2f end, int[][] arr) {
+    private void swap_array(Vector2f begin, Vector2f end, int[][] arr) {
         try{
             int temp = arr[(int)begin.x][(int)begin.y];  //moving
             arr[(int)begin.x][(int)begin.y] =  arr[(int)end.x][(int)end.y];
             arr[(int)end.x][(int)end.y] = temp;
-            return true;
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
-            return false;
         }
     }
 
@@ -94,61 +79,43 @@ public class AttackSystemManager  {
         return null;
     }
 
-    public boolean MovePlayer(int move) {
-        switch(move) {
+    public void MovePlayer(Direction direction) {
+        switch(direction) {
             case UP :
-                if(Player_swap(getPlayerIndex(),new Vector2f(getPlayerIndex().x-1,getPlayerIndex().y)))
-                    return true;
-                else
-                    return false;
+                Player_swap(getPlayerIndex(), new Vector2f(getPlayerIndex().x - 1, getPlayerIndex().y));
+                return;
             case DOWN:
-                if(Player_swap(getPlayerIndex(),new Vector2f(getPlayerIndex().x+1,getPlayerIndex().y)))
-                    return true;
-                else
-                    return false;
+                Player_swap(getPlayerIndex(), new Vector2f(getPlayerIndex().x + 1, getPlayerIndex().y));
+                return;
             case LEFT:
-                if(Player_swap(getPlayerIndex(),new Vector2f(getPlayerIndex().x,getPlayerIndex().y-1)))
-                    return true;
-                else
-                    return false;
+                Player_swap(getPlayerIndex(), new Vector2f(getPlayerIndex().x, getPlayerIndex().y - 1));
+                return;
             case RIGHT:
-                if(Player_swap(getPlayerIndex(),new Vector2f(getPlayerIndex().x,getPlayerIndex().y+1)))
-                    return true;
-                else
-                    return false;
+                Player_swap(getPlayerIndex(), new Vector2f(getPlayerIndex().x, getPlayerIndex().y + 1));
+                return;
             default:
-                return false;
         }
     }
 
-    public boolean MoveEnemy(int move) {
-        switch(move) {
+    public void MoveEnemy(Direction direction) {
+        switch(direction) {
             case UP :
-                if(Enemy_swap(getEnemyIndex(),new Vector2f(getEnemyIndex().x-1,getEnemyIndex().y)))
-                    return true;
-                else
-                    return false;
+                Enemy_swap(getEnemyIndex(), new Vector2f(getEnemyIndex().x - 1, getEnemyIndex().y));
+                return;
             case DOWN:
-                if(Enemy_swap(getEnemyIndex(),new Vector2f(getEnemyIndex().x+1,getEnemyIndex().y)))
-                    return true;
-                else
-                    return false;
+                Enemy_swap(getEnemyIndex(), new Vector2f(getEnemyIndex().x + 1, getEnemyIndex().y));
+                return;
             case LEFT:
-                if(Enemy_swap(getEnemyIndex(),new Vector2f(getEnemyIndex().x,getEnemyIndex().y-1)))
-                    return true;
-                else
-                    return false;
+                Enemy_swap(getEnemyIndex(), new Vector2f(getEnemyIndex().x, getEnemyIndex().y - 1));
+                return;
             case RIGHT:
-                if(Enemy_swap(getEnemyIndex(),new Vector2f(getEnemyIndex().x,getEnemyIndex().y+1)))
-                    return true;
-                else
-                    return false;
+                Enemy_swap(getEnemyIndex(), new Vector2f(getEnemyIndex().x, getEnemyIndex().y + 1));
+                return;
             default:
-                return false;
         }
     }
 
-    public boolean PlayerAttack(boolean arr[][], boolean isReverse) {
+    public boolean PlayerAttack(boolean[][] arr, boolean isReverse) {
         Vector2f np = getPlayerIndex();
         if(isReverse)
             return CheckAttack(np, GameStateManager.enemy_map,ReverseArr(arr));
@@ -156,7 +123,7 @@ public class AttackSystemManager  {
             return CheckAttack(np, GameStateManager.enemy_map,arr);
     }
 
-    public boolean EnemyAttack(boolean arr[][] , boolean isReverse) {
+    public boolean EnemyAttack(boolean[][] arr, boolean isReverse) {
         Vector2f np = getEnemyIndex();
         if(isReverse)
             return CheckAttack(np, GameStateManager.player_map,ReverseArr(arr));
@@ -164,7 +131,7 @@ public class AttackSystemManager  {
             return CheckAttack(np,GameStateManager.player_map,arr);
     }
 
-    public boolean[][] ReverseArr(boolean arr[][]) {
+    public boolean[][] ReverseArr(boolean[][] arr) {
 
         boolean[][] result = new boolean[3][3];
 
@@ -178,7 +145,7 @@ public class AttackSystemManager  {
         return result;
     }
 
-    private boolean CheckAttack(Vector2f np, int[][] map , boolean arr[][]) {
+    private boolean CheckAttack(Vector2f np, int[][] map , boolean[][] arr) {
         System.out.println("Player x: " + getPlayerIndex().x + " y: " +getPlayerIndex().y);
         System.out.println("Enemy x: "+getEnemyIndex().x + "y: "+getEnemyIndex().y);
         PlayState.DrawAttack = new boolean[3][4];
@@ -199,9 +166,5 @@ public class AttackSystemManager  {
             }
         }
         return isHeat;
-    }
-
-
-    public class Enemy_MP {
     }
 }

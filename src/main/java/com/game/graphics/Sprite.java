@@ -1,6 +1,7 @@
-package main.java.com.zeruls.game.graphics;
+package main.java.com.game.graphics;
 
-import main.java.com.zeruls.game.util.Vector2f;
+import main.java.com.game.entity.Direction;
+import main.java.com.game.util.Vector2f;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -83,10 +84,6 @@ public class Sprite {
         }
     }
 
-    public BufferedImage getSprteSheet() {
-        return SPRITESHEET;
-    }
-
     public BufferedImage getSprite(int x, int y) {
         return SPRITESHEET.getSubimage(x *w,y*h ,w,h);
     }
@@ -95,8 +92,8 @@ public class Sprite {
         return SPRITESHEET;
     }
 
-    public BufferedImage[] getSpriteArray(int i) {
-        return spriteArray[i];
+    public BufferedImage[] getSpriteArray(Direction direction) {
+        return spriteArray[direction.GetValue()];
     }
 
     public BufferedImage[][] getSpriteArray2(int i) {
@@ -105,7 +102,7 @@ public class Sprite {
 
     public String getFileName() {return FileName;}
 
-    public static void drawImg(Graphics2D g,BufferedImage img, Vector2f pos,int width,int heigh) {
+    public static void drawImg(Graphics2D g, BufferedImage img, Vector2f pos, int width, int heigh) {
         float x = pos.x;
         float y= pos.y;
 

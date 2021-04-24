@@ -1,8 +1,8 @@
-package main.java.com.zeruls.game;
+package main.java.com.game;
 
-import main.java.com.zeruls.game.states.GameStateManager;
-import main.java.com.zeruls.game.util.KeyHandler;
-import main.java.com.zeruls.game.util.MouseHandler;
+import main.java.com.game.util.KeyHandler;
+import main.java.com.game.util.MouseHandler;
+import main.java.com.game.states.GameStateManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -22,33 +22,21 @@ public class GamePanel extends JPanel implements Runnable{
 	private boolean running = false;
 	
 	private BufferedImage img;
-   private	Graphics2D g;
-   
-   private MouseHandler mouse;
-   private KeyHandler key;
+	private	Graphics2D g;
+	private MouseHandler mouse;
+	private KeyHandler key;
+	private GameStateManager gsm;
 
-   private GameStateManager gsm;
 
-   private Image BackGround;
-
-   private int FPS = 60;
-   private final int UPS = 25;
-
-    public GamePanel(int width,int height ) {
-		this.width= width;
-		this.height= height;
+	public GamePanel(int width,int height ) {
+		GamePanel.width = width;
+		GamePanel.height = height;
 		setPreferredSize(new Dimension(width,height));
 		setFocusable(true);
 		requestFocus();
 		
 	}
 
-	public static void sleep(long millis) throws InterruptedException {
-		Thread.sleep(millis);
-	}
-
-	
-	
 	public void addNotify() {
 		super.addNotify();
 
@@ -59,45 +47,31 @@ public class GamePanel extends JPanel implements Runnable{
 		}
 	}
 	
-	public void init() throws CloneNotSupportedException {
+	public void init() throws Exception {
 		running = true;
 		
 		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		g = (Graphics2D) img.getGraphics();
       
-     mouse = new MouseHandler(this);
-      key = new KeyHandler(this);	//JPanel*/
-	  //this.addMouseListener(new MouseHandler(this));
-	  //this.addKeyListener(new KeyHandler(this));
-      gsm = new GameStateManager();
+     	mouse = new MouseHandler(this);
+		key = new KeyHandler(this);
+		gsm = new GameStateManager();
 	}
 	@Override
 	public void run() {
         try {
             init();
-        } catch (CloneNotSupportedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        /*final double GAME_HERTZ = 64.0;
-        final double TBU = 1000000000 / GAME_HERTZ; // Time Before Update	15,625,000
 
-        final int MUBR = 3; // Must Update before render
-
-        double lastUpdateTime = System.nanoTime();
-        double lastRenderTime;
-
-        final double TARGET_FPS = 1000;
-        final double TTBR = 1000000000 / TARGET_FPS; // Total time before render 1,000,000
-
-		int frameCount = 0;
-        int lastSecondTime = (int) (lastUpdateTime / 1000000000);*/
-
-        //-----------------------
 		long initialTime = System.nanoTime();
-		final double timeU = 1000000000 / UPS;
-		final double timeF = 1000000000 / FPS;
+		int UPS = 25;
+		int FPS = 60;
+		double div = 1000000000;
+		final double timeU = div / UPS;
+		final double timeF = div / FPS;
 		double deltaU = 0, deltaF = 0;
-		int ticks = 0;
 		long timer = System.currentTimeMillis();
       
         oldFrameCount = 0;
@@ -111,15 +85,14 @@ public class GamePanel extends JPanel implements Runnable{
 			if(deltaU >=1) {
                 try {
                     input(mouse,key);
-                } catch (CloneNotSupportedException | InterruptedException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                try {
+				try {
                     update();
                 } catch (CloneNotSupportedException e) {
                     e.printStackTrace();
                 }
-                ticks++;
 				deltaU--;
 			}
 
@@ -131,7 +104,6 @@ public class GamePanel extends JPanel implements Runnable{
 			}
 			if(System.currentTimeMillis() - timer > 1000) {
 				frames = 0;
-				ticks=0;
 				timer += 1000;
 			}
 		}
@@ -141,7 +113,7 @@ public class GamePanel extends JPanel implements Runnable{
 		gsm.update();
 	}
 	
-	public void input(MouseHandler mouse, KeyHandler key) throws CloneNotSupportedException, InterruptedException {
+	public void input(MouseHandler mouse, KeyHandler key) throws Exception {
 
 		gsm.input(mouse, key);
 	}
@@ -155,7 +127,7 @@ public class GamePanel extends JPanel implements Runnable{
 	}
 	
 	public void draw() {
-		Graphics g2 = (Graphics) this.getGraphics();
+		Graphics g2 = this.getGraphics();
 		g2.drawImage(img,0,0,width,height,null);
 		g2.dispose();
 	}

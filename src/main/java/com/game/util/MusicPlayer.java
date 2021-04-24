@@ -1,6 +1,5 @@
-package main.java.com.zeruls.game.util;
+package main.java.com.game.util;
 
-import com.sun.tools.javac.Main;
 import javazoom.jl.player.Player;
 
 import java.io.BufferedInputStream;
@@ -11,30 +10,20 @@ import java.net.URL;
 public class MusicPlayer extends Thread {
     private Player player;
     private boolean isLoop;
-    private File file;
+    private final File file;
     private FileInputStream fis;
     private BufferedInputStream bis;
 
-    public MusicPlayer(String name, boolean isLoop) {
-        try
-        {
-            this.isLoop = isLoop;
-            ClassLoader classLoader = getClass().getClassLoader();
-            URL resource = classLoader.getResource(name);
+    public MusicPlayer(String name, boolean isLoop) throws Exception {
+        this.isLoop = isLoop;
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL resource = classLoader.getResource(name);
 
-            file = new File(resource.getFile());
-            fis = new FileInputStream(file);
-            bis = new BufferedInputStream(fis);
-            player = new Player(bis);
-        }catch (Exception e) {
-            e.getMessage();
-        }
-    }
-
-    public int getTime() {
-        if (player == null)
-            return 0;
-        return player.getPosition();
+        assert resource != null;
+        file = new File(resource.getFile());
+        fis = new FileInputStream(file);
+        bis = new BufferedInputStream(fis);
+        player = new Player(bis);
     }
 
     public void close() {

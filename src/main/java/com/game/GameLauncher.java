@@ -1,4 +1,4 @@
-package main.java.com.zeruls.game;
+package main.java.com.game;
 
 public class GameLauncher {
 	
@@ -7,6 +7,6 @@ public class GameLauncher {
 	}
 	
 	public static void main(String[] args) {
-		new GameLauncher();
+		 new GameLauncher();
 	}
 }

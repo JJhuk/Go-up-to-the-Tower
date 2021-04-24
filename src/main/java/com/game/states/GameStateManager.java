@@ -1,39 +1,34 @@
-package main.java.com.zeruls.game.states;
-
-
-
-import main.java.com.zeruls.game.GamePanel;
-import main.java.com.zeruls.game.graphics.Font;
-import main.java.com.zeruls.game.graphics.Sprite;
-import main.java.com.zeruls.game.util.KeyHandler;
-import main.java.com.zeruls.game.util.MouseHandler;
-import main.java.com.zeruls.game.util.Vector2f;
+package main.java.com.game.states;
+import main.java.com.game.GamePanel;
+import main.java.com.game.graphics.Font;
+import main.java.com.game.graphics.Sprite;
+import main.java.com.game.util.KeyHandler;
+import main.java.com.game.util.MouseHandler;
+import main.java.com.game.util.Vector2f;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
-
 
 public class GameStateManager {
 
-    private GameState states[];
+    private final GameState[] states;
 
     public static Vector2f map;
     public static int Now_Stage = 0;
     public static final int PLAY = 3;
     public static final int MENU = 1;
-    public static final int GAMEOVER = 5;
+    public static final int GAME_OVER = 5;
     public static final int PAUSE = 4;
     public static final int SELECT = 2;
     public static final int INTRO = 0;
 
 
-    public static int player_map[][];
-    public static int enemy_map[][];
+    public static int[][] player_map;
+    public static int[][] enemy_map;
 
     public static Font font;
 
 
-    public GameStateManager() {
+    public GameStateManager() throws Exception {
 
         map = new Vector2f(GamePanel.width,GamePanel.height);
 
@@ -51,7 +46,7 @@ public class GameStateManager {
         states[state] = null;
     }
 
-    public void add(int state) throws CloneNotSupportedException {
+    public void add(int state) throws Exception {
         if(states[state] != null)
             return;
         if(state == PLAY) {
@@ -77,39 +72,30 @@ public class GameStateManager {
 
     }
 
-    public void add(int state,boolean isBadEnding) {
+    public void add(int state,boolean isBadEnding) throws Exception {
         states[state] = new GameOverState(this,isBadEnding);
     }
 
-    public void addAndpop(int state) throws CloneNotSupportedException {
-        addAndpop(state,0);
-    }
-
-    public void addAndpop(int state,int remove) throws CloneNotSupportedException {
-        pop(state);
-        add(state);
-    }
-
     public void update() throws CloneNotSupportedException {
-        for(int i=0;i<states.length;i++) {
-            if(states[i] != null) {
-                states[i].update();
+        for (GameState state : states) {
+            if (state != null) {
+                state.update();
             }
         }
     }
 
-    public void input(MouseHandler mouse, KeyHandler key) throws CloneNotSupportedException, InterruptedException {
-        for(int i=0;i<states.length;i++) {
-                if(states[i] != null) {
-                    states[i].input(mouse,key);
-                }
+    public void input(MouseHandler mouse, KeyHandler key) throws Exception {
+        for (GameState state : states) {
+            if (state != null) {
+                state.input(mouse, key);
+            }
         }
     }
 
     public void render(Graphics2D g) {
-        for(int i=0;i<states.length;i++) {
-            if(states[i] != null) {
-                states[i].render(g);
+        for (GameState state : states) {
+            if (state != null) {
+                state.render(g);
             }
         }
     }

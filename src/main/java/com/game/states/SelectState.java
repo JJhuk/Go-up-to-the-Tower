@@ -1,50 +1,35 @@
-package main.java.com.zeruls.game.states;
+package main.java.com.game.states;
 
-import main.java.com.zeruls.game.graphics.Sprite;
-import main.java.com.zeruls.game.util.KeyHandler;
-import main.java.com.zeruls.game.util.MouseHandler;
-import main.java.com.zeruls.game.util.MusicPlayer;
-import main.java.com.zeruls.game.util.Vector2f;
-
-
-import java.util.LinkedList;
+import main.java.com.game.entity.Direction;
+import main.java.com.game.graphics.Sprite;
+import main.java.com.game.util.KeyHandler;
+import main.java.com.game.util.MouseHandler;
+import main.java.com.game.util.MusicPlayer;
+import main.java.com.game.util.Vector2f;
 
 import java.awt.*;
 import java.util.Queue;
+import java.util.LinkedList;
 
 public class SelectState extends GameState{
     public  static Queue<Card> player_cards;
-    public  static Queue<Card> enemey_cards;
+    public  static Queue<Card> enemy_cards;
 
     public final int PLAYER_CARDS = 10;
-    public final int DEATHKNIGHT_CARDS = 4;
-    public final int DEVIL_CARDS = 4;
-    public final int SKELETON_CARDS = 3;
-    public final int MAGICTION_CARDS = 4;
-    public final int NORMAL_CARDS = 7;
 
     public static final int DEVIL = 3;      //3 0 2 1
     public static final int SKELETON = 0;
     public static final int MAGICTION = 2;
     public static final int DEATHKNIGHT = 1;
 
-    private final int UP = 3;
-    private final int DOWN = 2;
-    private final int RIGHT = 0;
-    private final int LEFT = 1;
+    private final Sprite BackGround;
+    private final Card[] Cards;
+    private final Vector2f[] original_card_pos;
+    private final Vector2f[] StartButton_pos;     //rectangle 기준 왼쪽위 1 오른쪽위 2 오른쪽 밑 3 왼쪽 밑4
+    private final Vector2f[] ResetButton_pos;
 
-    private Sprite BackGround;
-    private Card Cards[];
-    private boolean isSelect[];
-    private Vector2f orginal_card_pos[];
-    private Vector2f StartButton_pos[];     //rectangle 기준 왼쪽위 1 오른쪽위 2 오른쪽 밑 3 왼쪽 밑4
-    private Vector2f ResetButton_pos[];
-
-    private  Vector2f pos_Selected_Cards[];    //원래 카드들의 위치
-    private  int isSelected_Cards[];   //-1일때 안고름
-    private Queue<Integer> selected_card_index;
-    private int isNormal;
-    private int index;
+    private final Vector2f[] pos_Selected_Cards;    //원래 카드들의 위치
+    private final Queue<Integer> selected_card_index;
     private MusicPlayer musicPlayer;
 
     public String getPath(String kind, String path)
@@ -52,73 +37,62 @@ public class SelectState extends GameState{
         return "entity/" + kind + "Card/" + path + ".png";
     }
 
-    public int getSize()
-    {
-        return 80;
-    }
-
-    public Card makeAttackCard( String kind, String path, float x, float y,int DM,int MP, boolean arrange[][])
+    public Card makeAttackCard(String kind, String path, float x, float y, int DM, int MP, boolean[][] arrange)
     {
         String sprite_path = getPath(kind, path);
-        int size = getSize();
-        return new Card( new Sprite(sprite_path), new Vector2f(x, y), size, DM,MP,arrange);
+        return new Card( new Sprite(sprite_path), new Vector2f(x, y), DM,MP,arrange);
     }
 
     public Card makeHealCard( String kind, String path, float x, float y,int plus, boolean isHeal)
     {
         String sprite_path = getPath(kind, path);
-        int size = getSize();
-        return new Card( new Sprite(sprite_path), new Vector2f(x, y), size, plus,isHeal);
+        return new Card( new Sprite(sprite_path), new Vector2f(x, y), plus,isHeal);
     }
 
-    public Card makeMoveCard( String kind, String path, float x, float y, int move)
+    public Card makeMoveCard( String kind, String path, float x, float y, Direction direction)
     {
         String sprite_path = getPath(kind, path);
-        int size = getSize();
-        return new Card( new Sprite(sprite_path), new Vector2f(x, y), size, move);
+        return new Card( new Sprite(sprite_path), new Vector2f(x, y), direction);
     }
 
     public Card makeUtilCard( String kind, String path, float x, float y)
     {
         String sprite_path = getPath(kind, path);
-        int size = getSize();
-        return new Card( new Sprite(sprite_path), new Vector2f(x, y), size);
+        return new Card( new Sprite(sprite_path), new Vector2f(x, y));
     }
 
     private void SelectEnemyCard(int card,int seed) throws CloneNotSupportedException {
-        isNormal = (int)(Math.random()*2);
+        int isNormal = (int) (Math.random() * 2);
         System.out.println(isNormal);
+        int index;
         if(isNormal == 0) { //스킬카드
             index = (int)(Math.random()*card) + seed;
             while(Cards[index].isEnemySelected())
                 index = (int)(Math.random()*card) + seed;
-            enemey_cards.add((Card)Cards[index].clone());
-            Cards[index].setEnemySelected(true);
         }
         else {  //보통카드
             index = (int)(Math.random()*6) + 1;
             while(Cards[index].isEnemySelected())
                 index = (int)(Math.random()*6) + 1;
-            enemey_cards.add((Card)Cards[index].clone());
-            Cards[index].setEnemySelected(true);
         }
+        enemy_cards.add((Card)Cards[index].clone());
+        Cards[index].setEnemySelected(true);
     }
 
 
-    public SelectState(GameStateManager gsm, int ANAMY) throws CloneNotSupportedException {
+    public SelectState(GameStateManager gsm, int enemy) throws Exception {
         super(gsm);
         BackGround = new Sprite("entity/SelectBackground.png");
         Cards = new Card[25];
-        isSelect = new boolean[PLAYER_CARDS];
-        isSelected_Cards = new int[3];
+        //-1일때 안고름
         pos_Selected_Cards = new Vector2f[3];
-        orginal_card_pos = new Vector2f[10];
+        original_card_pos = new Vector2f[10];
         StartButton_pos = new Vector2f[4];
         ResetButton_pos = new Vector2f[4];
 
-        player_cards = new LinkedList<Card>();
-        enemey_cards = new LinkedList<Card>();
-        selected_card_index = new LinkedList<Integer>();
+        player_cards = new LinkedList<>();
+        enemy_cards = new LinkedList<>();
+        selected_card_index = new LinkedList<>();
 
         pos_Selected_Cards[0] = new Vector2f(300,600);
         pos_Selected_Cards[1] = new Vector2f(165,600);
@@ -126,37 +100,106 @@ public class SelectState extends GameState{
         musicPlayer = new MusicPlayer("audio/SoundEffect/Button.mp3",false);
 
 
-        boolean arrange[][][] = {
-                {{false,false,true},{false,true,true},{false,false,true}},  //내려치기
-                {{false,true,true},{false,true,true},{false,true,true}},    //반가르기
-                {{false,false,false},{false,true,true},{false,false,false}},    //찌르기
-
-                {{false,false,false},{true,true,true},{false,false,false}},   //영혼가르기
-                {{false,true,false},{true,true,true},{false,true,false}},   //영혼십자베기
-                {{true,false,false},{true,true,false},{true,false,false}},   //영혼절단
-                {{true,true,true},{true,true,true},{true,true,true}},   //영혼폭팔
-
-                {{true,true,true},{true,false,true},{true,true,true}},  //뼈돌출
-                {{false,false,false},{true,false,false},{false,false,false}},   //암흑던지기
-                {{true,false,true},{false,true,false},{true,false,true}},   //암흑뿌리기
-                {{true,false,true},{true,true,true},{true,false,true}}, //암흑폭팔
-
-                {{true,false,false},{false,false,false},{false,true,false}},    //저주죽음
-                {{true,false,true},{false,true,false},{true,false,true}},   //피뿌리기
-                {{true,true,true},{true,true,true},{true,true,true}},   //피의 비
-                {{false,false,false},{true,true,false},{true,true,false}},  //흡혈
-
-                {{true,false,false},{true,true,false},{true,false,false}},  //뼈내리치기
-                {{true,false,false},{false,true,false},{true,false,false}},    //뼈던지기
-                {{false,false,false},{true,true,false},{false,false,false}}    //뼈찌르기
+        boolean[][][] arrange = {
+                {
+                    {false,false,true},
+                    {false,true,true},
+                    {false,false,true}
+                },  //내려치기
+                {
+                    {false,true,true},
+                    {false,true,true},
+                    {false,true,true}
+                },    //반가르기
+                {
+                    {false,false,false},
+                    {false,true,true},
+                    {false,false,false}
+                },    //찌르기
+                {
+                    {false,false,false},
+                    {true,true,true},
+                    {false,false,false}
+                },   //영혼가르기
+                {
+                    {false,true,false},
+                    {true,true,true},
+                    {false,true,false}
+                    },   //영혼십자베기
+                {
+                    {true,false,false},
+                    {true,true,false},
+                    {true,false,false}
+                    },   //영혼절단
+                {
+                    {true,true,true},
+                    {true,true,true},
+                    {true,true,true}
+                    },   //영혼폭팔
+                {
+                    {true,true,true},
+                    {true,false,true}
+                    ,{true,true,true}
+                    },  //뼈돌출
+                {
+                    {false,false,false},
+                    {true,false,false},
+                    {false,false,false}
+                    },   //암흑던지기
+                {
+                    {true,false,true},
+                    {false,true,false},
+                    {true,false,true}
+                    },   //암흑뿌리기
+                {
+                    {true,false,true},
+                    {true,true,true},
+                    {true,false,true}
+                    }, //암흑폭팔
+                {
+                    {true,false,false},
+                    {false,false,false},
+                    {false,true,false}
+                    },    //저주죽음
+                {
+                    {true,false,true},
+                    {false,true,false},
+                    {true,false,true}
+                    },   //피뿌리기
+                {
+                    {true,true,true},
+                    {true,true,true},
+                    {true,true,true}
+                    },   //피의 비
+                {
+                    {false,false,false},
+                    {true,true,false},
+                    {true,true,false}
+                    },  //흡혈
+                {
+                    {true,false,false},
+                    {true,true,false},
+                    {true,false,false}
+                    },  //뼈내리치기
+                {
+                    {true,false,false},
+                    {false,true,false},
+                    {true,false,false}
+                },    //뼈던지기
+                {
+                    {false,false,false},
+                    {true,true,false},
+                    {false,false,false}
+                }    //뼈찌르기
         };
 
+        //todo 어지럽다.. 그죠?
         Cards[0] = makeHealCard("Normal", "마나회복", 100, 150, 15, false);
         Cards[1] = makeHealCard("Normal", "체력회복", 250, 150, 15, true);
-        Cards[2] = makeMoveCard("Normal","아래쪽이동",400,150,DOWN);
-        Cards[3] = makeMoveCard("Normal","왼쪽이동",550,150,LEFT);
-        Cards[4] = makeMoveCard("Normal","위쪽이동",700,150,UP);
-        Cards[5] = makeMoveCard("Normal","오른쪽이동",850,150,RIGHT);
+        Cards[2] = makeMoveCard("Normal","아래쪽이동",400,150, Direction.DOWN);
+        Cards[3] = makeMoveCard("Normal","왼쪽이동",550,150, Direction.LEFT);
+        Cards[4] = makeMoveCard("Normal","위쪽이동",700,150, Direction.UP);
+        Cards[5] = makeMoveCard("Normal","오른쪽이동",850,150, Direction.RIGHT);
         Cards[6] = makeUtilCard("Normal","방어",100,300);
 
         Cards[7] = makeAttackCard("Player","내려치기",250,300,30,30,arrange[0]);
@@ -201,11 +244,11 @@ public class SelectState extends GameState{
 
 
         for(int i=0;i<10;i++) {
-            orginal_card_pos[i] = Cards[i].getPos();
+            original_card_pos[i] = Cards[i].getPos();
         }
 
         for(int i=0;i<3;i++) {  //데스나이트 10~13, 메지션 14~17, 데빌 18~21  -> normal카드 1~7 , 스켈레톤 22~24
-            switch (ANAMY) {
+            switch (enemy) {
                 case SKELETON:
                     SelectEnemyCard(3,22);
                     break;
@@ -229,7 +272,7 @@ public class SelectState extends GameState{
     }
 
     @Override
-    public void input(MouseHandler mouse, KeyHandler key) throws CloneNotSupportedException {
+    public void input(MouseHandler mouse, KeyHandler key) throws Exception {
         if(mouse.getButton() == 1) {
             System.out.println(mouse.getX() + ", " + mouse.getY());
             Card_Check(mouse.getX(),mouse.getY());
@@ -245,7 +288,7 @@ public class SelectState extends GameState{
                     if(Cards[i].isSelected()) { //원래 선택되어있으면
                         System.out.println("카드가 다시 원래대로 돌아갑니다.");
                         System.out.println("이전좌표 : " + Cards[i].getPos().x + "");
-                        Cards[i].setPos(orginal_card_pos[i]);   //원래위치로 ㄱㄱ
+                        Cards[i].setPos(original_card_pos[i]);   //원래위치로 ㄱㄱ
                         Cards[i].setSelected(false);
                         System.out.println("이후좌표 : " + Cards[i].getPos().x + "");
                         player_cards.poll();
@@ -270,7 +313,7 @@ public class SelectState extends GameState{
     }
 
 
-    private void Button_Check(float x, float y) throws CloneNotSupportedException {
+    private void Button_Check(float x, float y) throws Exception {
         if(x>= StartButton_pos[0].x && x<= StartButton_pos[1].x) {
             if(y>= StartButton_pos[0].y && y<= StartButton_pos[3].y) {
                 musicPlayer.start();
@@ -293,9 +336,11 @@ public class SelectState extends GameState{
                 musicPlayer.start();
                 musicPlayer = new MusicPlayer("audio/SoundEffect/Button.mp3",false);
                 for(int i=0;i<3;i++) {
-                    if (player_cards.peek() != null && selected_card_index.peek() != null) {
-                        player_cards.peek().setSelected(false);
-                        player_cards.peek().setPos(orginal_card_pos[selected_card_index.peek()]);
+                    Card playerCard = player_cards.peek();
+                    int selectCard = selected_card_index.peek();
+                    if (playerCard != null && selected_card_index.peek() != null) {
+                        playerCard.setSelected(false);
+                        playerCard.setPos(original_card_pos[selectCard]);
                         player_cards.poll();
                         selected_card_index.poll();
                     }

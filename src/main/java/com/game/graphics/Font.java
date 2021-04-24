@@ -1,4 +1,4 @@
-package main.java.com.zeruls.game.graphics;
+package main.java.com.game.graphics;
 
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;

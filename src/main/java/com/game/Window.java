@@ -1,4 +1,4 @@
-package main.java.com.zeruls.game;
+package main.java.com.game;
 
 import javax.swing.JFrame;
 

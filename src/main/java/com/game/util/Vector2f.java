@@ -1,6 +1,4 @@
-package main.java.com.zeruls.game.util;
-
-import java.util.Vector;
+package main.java.com.game.util;
 
 public class Vector2f implements  Cloneable{
     public float x;
@@ -12,10 +10,6 @@ public class Vector2f implements  Cloneable{
     public Vector2f() {
         x = 0;
         y = 0;
-    }
-
-    public Vector2f(Vector2f vec) {
-        new Vector2f(vec.x,vec.y); 
     }
 
     public Vector2f(float x, float y) {
@@ -55,8 +49,13 @@ public class Vector2f implements  Cloneable{
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    public Vector2f clone() {
+        try {
+            return (Vector2f) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
