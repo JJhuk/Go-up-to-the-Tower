@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: main.java.com.zeruls.game.GameLauncher
+Main-Class: main.java.com.game.GameLauncher
 
